@@ -1,75 +1,218 @@
-🕐 TimeSync Tool - Synchronization Script for Penetration Testing
-📋 Description
-TimeSync Tool is a specialized Python utility designed to solve the "Clock Skew Too Great" error in Kerberos authentication during penetration testing and security assessments. This script automatically synchronizes your system time with target machines in Active Directory environments, enabling successful execution of Impacket tools and other time-sensitive security testing.
+# 🕐 TimeSync Tool
 
-🎯 Key Features
-Feature	Description
-🔄 Automatic Time Sync	Synchronizes system clock with domain controllers and target machines
-💾 Backup & Restore	Creates automatic backups of timezone and system time configuration
-🎯 Multiple Sync Methods	Supports NTP synchronization and manual time setting
-🔧 Kerberos Problem Solver	Specifically addresses KRB_AP_ERR_SKEW errors in Active Directory
-📊 Progress Tracking	Visual progress bars using pwn library for better user experience
-🛡️ Safety Features	Automatic NTP disabling to prevent time reversion
-🚀 Use Cases
-Penetration Testing: Resolve Kerberos time synchronization issues
+![Python](https://img.shields.io/badge/Python-3.6%2B-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20macOS-lightgrey)
 
-Red Team Operations: Maintain proper time sync during AD attacks
+**Solución profesional para errores de sincronización temporal en pruebas de penetración Active Directory**
 
-Security Research: Test time-dependent vulnerabilities
+## 📖 Descripción
 
-Forensic Analysis: Coordinate timestamps across multiple systems
+TimeSync Tool es una utilidad especializada en Python diseñada para resolver el error **"Clock Skew Too Great"** en autenticaciones Kerberos durante pruebas de penetración y evaluaciones de seguridad. El script sincroniza automáticamente el tiempo de tu sistema con máquinas objetivo en entornos Active Directory, permitiendo la ejecución exitosa de herramientas Impacket y otras pruebas de seguridad sensibles al tiempo.
 
-⚙️ Technical Specifications
-python
-# Core Functionality
-├── Time synchronization with target machines
-├── Timezone backup and restoration  
-├── NTP server communication
-├── System time manipulation
-└── Error handling for time-sensitive operations
+## 🚀 Características Principales
 
-# Dependencies
-├── python3
-├── ntpdate (system package)
-├── requests (for API time sources)
-├── pwn (for UI elements)
-└── standard library modules
-🎮 Usage Examples
-bash
-# Synchronize with target machine
-sudo python3 time_sync.py -t 10.10.11.76
+| Característica | Descripción |
+|---------------|-------------|
+| **🔄 Sincronización Automática** | Sincroniza el reloj del sistema con controladores de dominio y máquinas objetivo |
+| **💾 Backup & Restauración** | Crea respaldos automáticos de configuración de zona horaria y hora del sistema |
+| **🎯 Múltiples Métodos** | Soporta sincronización NTP y configuración manual de hora |
+| **🔧 Solucionador de Kerberos** | Enfocado en resolver errores `KRB_AP_ERR_SKEW` en Active Directory |
+| **📊 Seguimiento Visual** | Barras de progreso usando librería `pwn` para mejor experiencia de usuario |
+| **🛡️ Características de Seguridad** | Deshabilita NTP automáticamente para prevenir reversiones de tiempo |
 
-# Restore original time settings
-sudo python3 time_sync.py --restore
+## 📋 Tabla de Contenidos
 
-# Set specific time manually
-sudo python3 time_sync.py --target-time "2025-01-01 12:00:00"
+- [Instalación](#-instalación)
+- [Uso](#-uso)
+- [Ejemplos](#-ejemplos)
+- [Funciones Principales](#-funciones-principales)
+- [Solución de Problemas](#-solución-de-problemas)
+- [Dependencias](#-dependencias)
+- [Contribuciones](#-contribuciones)
+- [Licencia](#-licencia)
 
-# Check backup status
-sudo python3 time_sync.py --check-backup
-🔧 Problem Solved
-This tool specifically addresses the critical Kerberos error:
+## 🛠️ Instalación
 
-text
-Kerberos SessionError: KRB_AP_ERR_SKEW(Clock skew too great)
-By ensuring time synchronization within the 5-minute tolerance window required by Kerberos authentication protocols in Windows Active Directory environments.
+### Prerrequisitos del Sistema
+```bash
+# Instalar ntpdate (requerido para sincronización NTP)
+sudo apt update && sudo apt install ntpdate
 
-📝 Requirements
-Python 3.6+
+# En sistemas basados en Red Hat/CentOS:
+# sudo yum install ntpdate
+```
 
-Root/Administrator privileges
+### Instalación de Dependencias de Python
+```bash
+# Clonar o descargar el script
+git clone <repository-url>
+cd timesync-tool
 
-ntpdate system package
+# Instalar dependencias de Python
+pip3 install -r requirements.txt
+```
 
-Network access to target time sources
+### Archivo requirements.txt
+```plaintext
+ntplib==0.4.0
+requests>=2.31.0
+pwn>=4.9.0
+```
 
-🛡️ Safety Notes
-Always creates backups before time modifications
+## 🎮 Uso
 
-Provides restoration functionality
+### Sincronización Básica
+```bash
+# Sincronizar con máquina objetivo
+sudo python3 configTime.py -t 10.10.11.76
 
-Includes validation and confirmation prompts
+# Sincronizar y mostrar diferencias de tiempo
+sudo python3 configTime.py -t 192.168.1.100 --verbose
+```
 
-Designed for authorized security testing only
+### Restauración y Verificación
+```bash
+# Restaurar configuración original de tiempo
+sudo python3 configTime.py --restore
 
-This tool is essential for security professionals working with time-sensitive protocols in enterprise environments, particularly when conducting Active Directory security assessments and penetration testing.
+# Verificar estado del backup
+sudo python3 configTime.py --check-backup
+
+# Establecer hora manualmente
+sudo python3 configTime.py --target-time "2025-01-01 12:00:00"
+```
+
+### Modo Avanzado
+```bash
+# Combinar sincronización con verificación
+sudo python3 configTime.py -t 10.10.11.76 --check-backup
+
+# Usar servidores NTP específicos
+sudo python3 configTime.py -t dc.corporation.com --ntp-servers "time.google.com,pool.ntp.org"
+```
+
+## 📝 Ejemplos
+
+### Ejemplo 1: Resolver Error Kerberos
+```bash
+# Error típico: KRB_AP_ERR_SKEW(Clock skew too great)
+# Solución: Sincronizar con el DC
+sudo python3 configTime.py -t dc.voleur.htb
+
+# Luego ejecutar Impacket normalmente
+impacket-getTGT voleur.htb/user:Password123
+```
+
+### Ejemplo 2: Entorno de Pruebas
+```bash
+# 1. Verificar backup actual
+sudo python3 configTime.py --check-backup
+
+# 2. Sincronizar con objetivo
+sudo python3 configTime.py -t 10.10.11.76
+
+# 3. Ejecutar herramientas de pentesting
+impacket-secretsdump -k -no-pass VICTIM.DC
+
+# 4. Restaurar configuración original
+sudo python3 configTime.py --restore
+```
+
+## 🔧 Funciones Principales
+
+### `backup_timezone()`
+- Crea respaldo de zona horaria y configuración actual
+- Almacena timestamp exacto del momento del backup
+- Guarda variable de entorno TZ si existe
+
+### `restore_time()`
+- Restaura hora del sistema usando NTP como método principal
+- Incluye respaldo manual interactivo
+- Maneja ajustes específicos de diferencia de días
+
+### `get_victim_date(target)`
+- Obtiene hora exacta de máquina objetivo via NTP
+- Soporta múltiples servidores de respaldo
+- Timeout configurable para entornos con latencia
+
+### `calculate_and_synchronize()`
+- Calcula diferencias temporales precisas
+- Sincroniza reloj del sistema automáticamente
+- Proporciona feedback detallado del proceso
+
+## 🚨 Solución de Problemas
+
+### Error Común: "Clock Skew Too Great"
+```bash
+# Síntoma: Kerberos SessionError: KRB_AP_ERR_SKEW
+# Solución: 
+sudo python3 configTime.py -t <DC_IP>
+```
+
+### Error: Comando ntpdate no encontrado
+```bash
+# Solución: Instalar ntpdate
+sudo apt install ntpdate
+```
+
+### Error: Permisos insuficientes
+```bash
+# Solución: Ejecutar como root
+sudo python3 configTime.py [opciones]
+```
+
+### Problema: Hora se revierte automáticamente
+```bash
+# El script deshabilita NTP temporalmente para evitar esto
+# Si persiste, verificar servicios de tiempo:
+sudo systemctl status systemd-timesyncd
+```
+
+## 📊 Dependencias
+
+### Python (Requerido)
+- **Python 3.6+** - Lenguaje base del script
+
+### Paquetes de Sistema
+- **ntpdate** - Cliente NTP para sincronización
+- **timedatectl** - Gestor de tiempo del sistema (systemd)
+
+### Librerías Python
+| Librería | Función |
+|----------|---------|
+| **ntplib** | Comunicación con servidores NTP |
+| **requests** | Solicitudes HTTP a APIs de tiempo |
+| **pwn** | Interfaz de usuario y barras de progreso |
+| **datetime** | Manipulación de fechas y horas |
+| **subprocess** | Ejecución de comandos del sistema |
+
+## 🤝 Contribuciones
+
+¡Las contribuciones son bienvenidas! Por favor:
+
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## 📄 Licencia
+
+Distribuido bajo licencia MIT. Ver `LICENSE` para más información.
+
+## ⚠️ Aviso Legal
+
+Este tool está diseñado **exclusivamente** para:
+- Pruebas de penetración autorizadas
+- Investigación de seguridad
+- Entornos de aprendizaje
+- Auditorías de seguridad legítimas
+
+**No utilizar para actividades ilegales.** El uso de esta herramienta es responsabilidad del usuario.
+
+---
+
+**¿Problemas o sugerencias?** Abre un issue en el repositorio del proyecto.
+
+**¿Te ayudó este tool?** ¡Considera darle una ⭐ en GitHub!
