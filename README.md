@@ -57,7 +57,7 @@ pip3 install -r requirements.txt
 ```plaintext
 ntplib==0.4.0
 requests>=2.31.0
-pwn>=4.9.0
+pwntools>=4.9.0
 ```
 
 ## 🎮 Uso
@@ -66,9 +66,6 @@ pwn>=4.9.0
 ```bash
 # Sincronizar con máquina objetivo
 sudo python3 configTime.py -t 10.10.11.76
-
-# Sincronizar y mostrar diferencias de tiempo
-sudo python3 configTime.py -t 192.168.1.100 --verbose
 ```
 
 ### Restauración y Verificación
